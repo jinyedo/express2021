@@ -68,7 +68,7 @@ boardRouter.get("/getList", async (req, res) => {
 });
 
 
-// 특정 게시글 조회
+// 전체 게시글 및 특정 게시글 조회
 boardRouter.get("/", async (req, res) => {
     try {
         const { Op } = sequelize;
@@ -98,6 +98,31 @@ boardRouter.get("/", async (req, res) => {
         res.status(500).send("서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
     }
 });
+
+// 게시글 추가하기
+boardRouter.post("/", async (req, res) => {
+    try {
+        const createBoard = req.body;
+
+        if (!createBoard.title || !createBoard.content) {
+            res.status(400).send("입력 요청이 잘못되었습니다.");
+            return; 
+        }
+
+        const result = await Board.create({
+            title: createBoard.title,
+            content: createBoard.content
+        });
+
+        res.status(201).send({
+            result : `작성을 완료했습니다.`,
+            content: result
+        });
+
+    } catch (err) {
+        res.status(500).send("서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    }
+})
 
 // 수정하기
 boardRouter.put("/:id", async (req, res) => {
