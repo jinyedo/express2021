@@ -53,8 +53,9 @@ const board_sync = async () => {
     }
 }
 // board_sync();
+
 // 전체 게시글 조회하기
-boardRouter.get("/", async (req, res) => {
+boardRouter.get("/getList", async (req, res) => {
     try {
         const findBoardList = await Board.findAll();
         res.send({
@@ -66,14 +67,94 @@ boardRouter.get("/", async (req, res) => {
     }
 });
 
-boardRouter.get("/:id", async (req, res) => {
+
+// 특정 게시글 조회
+boardRouter.get("/", async (req, res) => {
     try {
-        const 
-        const findBoardList = await Board.findAll();
+        const { Op } = sequelize;
+        let {id, title, content} = req.query;
+
+        const findBoardQuery = {
+            attributes: ['id', 'title', 'content']
+        }
+
+        if (id && title && content) {
+            findBoardQuery['where'] = { id, title: {[Op.substring]: title}, content: {[Op.substring]: content} }
+        } else if(id) {
+            findBoardQuery['where'] = {id}
+        } else if (title) {
+            findBoardQuery['where'] = { title: {[Op.substring]: title} } 
+        } else if (content) {
+            findBoardQuery['where'] = { content: {[Op.substring]: content} }
+        }
+
+        const result = await Board.findAll(findBoardQuery);
+
         res.send({
-            count: findBoardList.length,
-            boards: findBoardList
-        })
+            count: result.length,
+            result : result
+        });
+    } catch(err) {
+        res.status(500).send("서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    }
+});
+
+// 수정하기
+boardRouter.put("/:id", async (req, res) => {
+    try {
+        const updateBoardId = parseInt(req.params.id);
+        const updateTitle = req.body.title;
+        const updateContent = req.body.content;
+        const { Op } = sequelize;
+
+        const findBoard = await Board.findOne({
+            where: {
+                id : {[Op.eq]: updateBoardId}
+            }
+        });
+
+        if (!findBoard || (!updateTitle && !updateContent)) {
+            res.status(400).send("해당 게시글이 존재하지 않거나, 입력 요청이 잘못되었습니다.");
+            return; 
+        }
+
+        if (updateTitle) findBoard.title = updateTitle;
+        if (updateContent) findBoard.content = updateContent;
+        findBoard.save();
+
+        res.status(200).send({
+            msg : "수정을 완료하였습니다.",
+            result : findBoard
+        });
+
+    } catch(err) {
+        res.status(500).send("서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    }
+});
+
+// 삭제하기
+boardRouter.delete("/:id", async (req, res) => {
+    try {
+        const deleteBoardId = parseInt(req.params.id);
+        const { Op } = sequelize;
+
+        const findBoard = await Board.findOne({
+            where: {
+                id : {[Op.eq]: deleteBoardId}
+            }
+        });
+
+        if (!findBoard) {
+            res.status(400).send("해당 회원이 존재하지 않습니다.");
+            return; 
+        }
+
+        findBoard.destroy();
+
+        res.status(200).send({
+            msg : "삭제를 완료하였습니다."
+        });
+
     } catch(err) {
         res.status(500).send("서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
     }
