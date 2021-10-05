@@ -2,45 +2,12 @@ import { Router } from "express";
 import _ from "lodash";
 import sequelize from "sequelize";
 import faker from "faker";
+import db from '../models/index.js'
+
 faker.locale = "ko";
+const Board = db.Board;
 
 const boardRouter = Router();
-
-const seq = new sequelize('express', 'root', null, {
-    dialect: 'mysql',
-    host: 'localhost',
-    password: "911059",
-    logging: true
-});
-
-// Board 테이블 생성 
-const Board = seq.define("board", {
-    title: {
-        type: sequelize.STRING, // String type 으로 선언
-        allowNull: false // null 허용 X
-    },
-    content: {
-        type: sequelize.TEXT,
-        allowNull: true
-    }
-});
-
-const initDB = async() => {
-    await Board.sync();
-}
-
-initDB();
-
-const check_sequelize_auth = async () => {
-    try {
-        await seq.authenticate();
-        console.log("DB 연결 성공")
-    } catch(err) {
-        console.error("DB 연결 실패: ", err)
-    }
-}
-
-check_sequelize_auth();
 
 // Board 데이터 생성 
 const board_sync = async () => {
