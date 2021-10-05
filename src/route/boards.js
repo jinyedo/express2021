@@ -53,10 +53,22 @@ const board_sync = async () => {
     }
 }
 // board_sync();
-
 // 전체 게시글 조회하기
-boardRouter.get("/getList", async (req, res) => {
+boardRouter.get("/", async (req, res) => {
     try {
+        const findBoardList = await Board.findAll();
+        res.send({
+            count: findBoardList.length,
+            boards: findBoardList
+        })
+    } catch(err) {
+        res.status(500).send("서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    }
+});
+
+boardRouter.get("/:id", async (req, res) => {
+    try {
+        const 
         const findBoardList = await Board.findAll();
         res.send({
             count: findBoardList.length,
