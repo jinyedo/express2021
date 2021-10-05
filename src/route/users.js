@@ -3,7 +3,10 @@ import _ from "lodash";
 import sequelize from "sequelize";
 import faker from "faker";
 import bcrypt from 'bcrypt';
+import db from '../models/index.js'
+
 faker.locale = "ko";
+const User = db.User;
 
 const userRouter = Router();
 
@@ -12,61 +15,6 @@ const getRandomInt = (min, max) => {
     max = Math.floor(max);
     return Math.floor(Math.random() * (max-min) + min);
 }
-
-/* DB 연결 */
-const seq = new sequelize('express', 'root', null, {
-    dialect: 'mysql',
-    host: 'localhost',
-    password: "911059",
-    logging: true
-});
-
-const check_sequelize_auth = async () => {
-    try {
-        await seq.authenticate();
-        console.log("DB 연결 성공")
-    } catch(err) {
-        console.error("DB 연결 실패: ", err)
-    }
-}
-
-check_sequelize_auth();
-
-
-/* User 테이블 생성 */
-const User = seq.define("user", {
-    name: {
-        type: sequelize.STRING,
-        allowNull: false
-    },
-    age: {
-        type: sequelize.INTEGER,
-        allowNull: false
-    },
-    password: {
-        type: sequelize.STRING,
-        allowNull: false
-    }
-});
-
-/* Board 테이블 생성 */
-const Board = seq.define("board", {
-    title: {
-        type: sequelize.STRING, // String type 으로 선언
-        allowNull: false // null 허용 X
-    },
-    content: {
-        type: sequelize.TEXT,
-        allowNull: true
-    }
-});
-
-const initDB = async() => {
-    await User.sync();
-    await Board.sync();
-}
-
-// initDB();
 
 // /* User 데이터 생성 */
 // const user_sync = async () => {
