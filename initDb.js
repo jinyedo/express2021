@@ -1,12 +1,24 @@
+import db from './src/models/index.js'
 import bcrypt from 'bcrypt';
 import faker from "faker";
 
+
+const { User, Board } = db;
+
 faker.locale = "ko";
 
-const getRandomInt = (min, max) => {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max-min) + min);
+const getPaginatedItems = (items, page, pageSize) => {
+    var pg = page || 1,
+      pgSize = pageSize || 10,
+      offset = (pg - 1) * pgSize,
+      pagedItems = _.drop(items, offset).slice(0, pgSize);
+    return {
+      page: pg,
+      pageSize: pgSize,
+      total: items.length,
+      total_pages: Math.ceil(items.length / pgSize),
+      data: pagedItems
+    };
 }
 
 /* User 데이터 생성 */
@@ -26,10 +38,11 @@ user_sync();
 // Board 데이터 생성 
 const board_sync = async () => {
     await Board.sync({ force: true }); // { force: true }: User 초기화
-    for (let i=0; i<10000; i++) {
+    for (let i=0; i<100; i++) {
         await Board.create({
             title: faker.lorem.sentence(1),
-            content: faker.lorem.sentence(10)
+            content: faker.lorem.sentence(10),
+            userId: getRandomInt(1, 1000)
         });
     }
 }

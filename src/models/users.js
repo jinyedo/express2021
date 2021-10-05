@@ -15,5 +15,10 @@ export default (sequelize, DataTypes) => {
         }
     });
 
+    // 연관관계 설정
+    User.associate = function(models) {
+        models.User.hasMany(models.Board);
+    }
+
     return User; 
 };

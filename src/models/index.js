@@ -24,16 +24,16 @@ sequelize.authenticate()
 
 const db = {
     User: User(sequelize, Sequelize.DataTypes),
-    Board: Board(sequelize, Sequelize.DataTypes)
+    Board: Board(sequelize, Sequelize.DataTypes),
 };
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-// Object.keys(db).forEach((modelName) => {
-//     if (db[modelName].associate) {
-//         db[modelName].associate(db);
-//     }
-// });
+Object.keys(db).forEach((modelName) => {
+    if (db[modelName].associate) {
+        db[modelName].associate(db);
+    }
+});
 
 export default db;

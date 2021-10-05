@@ -11,5 +11,10 @@ export default (sequelize, DataTypes) => {
         }
     });
 
+    // 연관관계 설정
+    Board.associate = function(models) {
+        models.Board.belongsTo(models.User);
+    }
+
     return Board; 
 };

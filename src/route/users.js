@@ -1,4 +1,5 @@
 import { Router } from "express";
+import board from "../models/board.js";
 import db from '../models/index.js'
 
 const User = db.User;
@@ -39,11 +40,11 @@ userRouter.post("/", async (req, res) => {
     try {
         const createUser = req.body;
 
-        if (!createUser.name && !createUser.age) {
+        if (!createUser.name || !createUser.age) {
             res.status(400).send("입력 요청이 잘못되었습니다.");
         }
 
-        await User.create({
+        const user = await User.create({
             name: createUser.name,
             age: parseInt(createUser.age)
         });
