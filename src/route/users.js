@@ -1,8 +1,9 @@
 import { Router } from "express";
 import board from "../models/board.js";
 import db from '../models/index.js'
+import bcrypt from 'bcrypt';
 
-const User = db.User;
+const { User, Permission } = db;
 
 const userRouter = Router();
 
@@ -38,19 +39,30 @@ userRouter.get("/", async (req, res) => {
 // 회원 추가하기
 userRouter.post("/", async (req, res) => {
     try {
-        const createUser = req.body;
+        const {name, age, password, permission} = req.body;
 
-        if (!createUser.name || !createUser.age) {
+        if (!name || !age || !password || !permission.title || !permission.level) {
             res.status(400).send("입력 요청이 잘못되었습니다.");
+            return;
         }
 
+        const hashPassword = await bcrypt.hash(password, 10);
+
+        console.log(hashPassword);
+
         const user = await User.create({
-            name: createUser.name,
-            age: parseInt(createUser.age)
+            name: name,
+            age: parseInt(age),
+            password: hashPassword
         });
 
+        await user.createPermission({
+            title: permission.title,
+            level: permission.level
+        })
+
         res.status(201).send({
-            result : `${createUser.name}님을 생성했습니다.`
+            result : `${name}님을 생성했습니다.`
         });
         
     } catch(err) {
