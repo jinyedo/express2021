@@ -17,8 +17,8 @@ export default (sequelize, DataTypes) => {
 
     // 연관관계 설정
     Permission.associate = function(models) {
-        models.Permission.belongsTo(models.User);
-    }
+        models.Permission.hasMany(models.User); // User 연관관계 설정 - 일대다
+     }
 
     return Permission; 
 };

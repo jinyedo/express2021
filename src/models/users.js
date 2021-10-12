@@ -18,7 +18,7 @@ export default (sequelize, DataTypes) => {
     // 연관관계 설정
     User.associate = function(models) {
         models.User.hasMany(models.Board); // Board 연관관계 설정  - 일대다
-        models.User.hasOne(models.Permission); // Permission 연관관계 설정  - 일대일
+        models.User.belongsTo(models.Permission); // Permission 연관관계 설정  - 다대일
     }
 
     return User; 
