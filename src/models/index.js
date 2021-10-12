@@ -3,6 +3,7 @@ import Sequelize from 'sequelize';
 
 import User from './users.js';
 import Board from './board.js';
+import Permission from './permission.js'
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ sequelize.authenticate()
 const db = {
     User: User(sequelize, Sequelize.DataTypes),
     Board: Board(sequelize, Sequelize.DataTypes),
+    Permission: Permission(sequelize, Sequelize.DataTypes)
 };
 
 db.sequelize = sequelize;
