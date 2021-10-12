@@ -49,6 +49,27 @@ boardRouter.get("/", async (req, res) => {
     }
 });
 
+// 특정 게시글 조회하기
+boardRouter.get("/:id", async (req, res) => {
+    try {
+        const findBoard = await Board.findOne({
+            include: [{
+                model: User,
+                attributes: ["id", "name"]
+            }],
+            where: {
+                id: req.params.id
+            }
+        });
+        res.send({
+            boards: findBoard
+        })
+    } catch(err) {
+        res.status(500).send("서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    }
+});
+
+
 // 게시글 추가하기
 boardRouter.post("/", async (req, res) => {
     try {
