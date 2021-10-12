@@ -2,6 +2,7 @@ import { Router } from "express";
 import db from '../models/index.js'
 
 const { Board, User } = db;
+const sequelize = db.Sequelize;
 
 const boardRouter = Router();
 

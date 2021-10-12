@@ -4,6 +4,7 @@ import db from '../models/index.js'
 import bcrypt from 'bcrypt';
 
 const { User, Board, Permission } = db;
+const sequelize = db.Sequelize;
 
 const userRouter = Router();
 
