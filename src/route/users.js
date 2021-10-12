@@ -3,7 +3,7 @@ import board from "../models/board.js";
 import db from '../models/index.js'
 import bcrypt from 'bcrypt';
 
-const { User, Permission } = db;
+const { User, Board, Permission } = db;
 
 const userRouter = Router();
 
@@ -36,19 +36,39 @@ userRouter.get("/", async (req, res) => {
     }
 });
 
+// 특정 회원 가져오기
+userRouter.get("/:id", async (req, res) => {
+    try {
+        const findUser = await User.findOne({
+            // include: [Permission, Board] - 모든 컬럼을 다 보고싶으면
+            include: [{
+                model: Permission,
+                attributes: ["title", "level"]
+            }, {
+                model: Board,
+                attributes: ["id", "title"]
+            }],
+            where: {
+                id: req.params.id
+            }
+        });
+        res.status(200).send({findUser});
+    } catch(err) {
+        res.status(500).send("서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    }
+});
+
 // 회원 추가하기
 userRouter.post("/", async (req, res) => {
     try {
         const {name, age, password, permission} = req.body;
 
-        if (!name || !age || !password || !permission.title || !permission.level) {
+        if (!name || !age || !password || !permission) {
             res.status(400).send("입력 요청이 잘못되었습니다.");
             return;
         }
 
         const hashPassword = await bcrypt.hash(password, 10);
-
-        console.log(hashPassword);
 
         const user = await User.create({
             name: name,
