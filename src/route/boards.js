@@ -1,7 +1,7 @@
 import { Router } from "express";
 import db from '../models/index.js'
 
-const Board = db.Board;
+const { Board, User } = db;
 
 const boardRouter = Router();
 
@@ -17,7 +17,6 @@ boardRouter.get("/getList", async (req, res) => {
         res.status(500).send("서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
     }
 });
-
 
 // 전체 게시글 및 특정 게시글 조회
 boardRouter.get("/", async (req, res) => {
@@ -53,16 +52,19 @@ boardRouter.get("/", async (req, res) => {
 // 게시글 추가하기
 boardRouter.post("/", async (req, res) => {
     try {
-        const createBoard = req.body;
+        const { title, content, userId } = req.body;
 
-        if (!createBoard.title || !createBoard.content) {
+        const findUser = userId ? await User.findOne({id: userId}) : null
+
+        if (!title || !content || !findUser) {
             res.status(400).send("입력 요청이 잘못되었습니다.");
             return; 
         }
 
         const result = await Board.create({
-            title: createBoard.title,
-            content: createBoard.content
+            title: title,
+            content: content,
+            userId: userId
         });
 
         res.status(201).send({
@@ -71,6 +73,7 @@ boardRouter.post("/", async (req, res) => {
         });
 
     } catch (err) {
+        console.log(err);
         res.status(500).send("서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
     }
 })
