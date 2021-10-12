@@ -18,7 +18,7 @@ if (process.env.NODE_ENV === "development") {
             app.use("/boards", boardRouter);
             app.listen(3000);
         });
-    }
+    });
 } else if (process.env.NODE_ENV === "production") {
     db.sequelize.sync().then(()=>{
         console.log("상용환경 sync 끝")
