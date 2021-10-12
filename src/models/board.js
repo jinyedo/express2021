@@ -13,7 +13,7 @@ export default (sequelize, DataTypes) => {
 
     // 연관관계 설정
     Board.associate = function(models) {
-        models.Board.belongsTo(models.User);
+        models.Board.belongsTo(models.User); // User와 연관관계 설정
     }
 
     return Board; 
